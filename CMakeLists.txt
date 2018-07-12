@@ -96,7 +96,6 @@ target_include_directories (Log4cpp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 install (
   DIRECTORY include/log4cpp
   DESTINATION include
-  PATTERN "config.h" EXCLUDE
   PATTERN ".svn" EXCLUDE
   PATTERN "*.am" EXCLUDE
   PATTERN "*.in" EXCLUDE
