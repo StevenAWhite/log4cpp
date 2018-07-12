@@ -6,31 +6,15 @@
 # (2) Default installation directory is /usr/local, override with -DCMAKE_INSTALL_PREFIX="" during cmake
 #     invocation
 # (3) Do the usual "make clean all" to build the library
-# (4) To install either "make install" or "make install DESTDIR=<your directory>"
 # (5) Need to include changes in include/log4cpp/Portability.hh for OSX to build
+cmake_minimum_required( VERSION 3.0)
+project ( Log4cpp )
 
-PROJECT ( LOG4CPP )
+if( NOT DEFINED CMAKE_DEBUG_POSTFIX)
+  set (CMAKE_DEBUG_POSTFIX "D" CACHE STRING "Suffix to be appeneded before the extension to a debug output")
+endif()
 
-INCLUDE_DIRECTORIES ( include )
-INCLUDE_DIRECTORIES ( . )
-
-IF (WIN32)
-  ADD_DEFINITIONS ( -D_CRT_SECURE_NO_WARNINGS )
-ELSE (WIN32)
-  IF (APPLE)
-    ADD_DEFINITIONS ( -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
-  ELSE (APPLE)
-    ADD_DEFINITIONS ( -pthread -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
-  ENDIF (APPLE)
-ENDIF (WIN32)
-
-IF ( CMAKE_BUILD_TYPE MATCHES "Debug" )
-  SET ( LOG4CPP_LIBRARY_NAME "log4cppD" )
-ELSE ( CMAKE_BUILD_TYPE MATCHES "Debug" )
-  SET ( LOG4CPP_LIBRARY_NAME "log4cpp" )
-ENDIF ( CMAKE_BUILD_TYPE MATCHES "Debug" )
-
-ADD_LIBRARY ( ${LOG4CPP_LIBRARY_NAME}
+set(SOURCES
   src/Appender.cpp
   src/AppenderSkeleton.cpp
   src/AppendersFactory.cpp
@@ -80,12 +64,27 @@ ADD_LIBRARY ( ${LOG4CPP_LIBRARY_NAME}
   src/AbortAppender.cpp
 )
 
-IF (WIN32)
-  TARGET_LINK_LIBRARIES (${LOG4CPP_LIBRARY_NAME} kernel32 user32 ws2_32 advapi32 )
-  SET_TARGET_PROPERTIES(${LOG4CPP_LIBRARY_NAME} PROPERTIES LINK_FLAGS /NODEFAULTLIB:msvcrt )
-ENDIF (WIN32)
+option(LOG4CPP_BUILD_SHARED "Toggle building of static or shared library variant" ON)
+if (LOG4CPP_BUILD_SHARED)
+	add_library ( log4cpp  SHARED ${SOURCES} )
+	target_compile_definitions(log4cpp PUBLIC  LOG4CPP_HAS_DLL )
+else()
+	add_library ( log4cpp  STATIC ${SOURCES} )
+endif()
 
-INSTALL (
+if (WIN32)
+  target_compile_definitions ( log4cpp  PRIVATE -D_CRT_SECURE_NO_WARNINGS )
+  target_link_libraries (log4cpp ws2_32  )
+  set_target_properties(log4cpp PROPERTIES   DEFINE_SYMBOL LOG4CPP_BUILD_DLL )
+elseif (APPLE)
+    target_compile_definitions ( log4cpp  -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
+else ()
+    target_compile_definitions ( log4cpp -pthread -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
+endif ()
+
+target_include_directories (log4cpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/. ${CMAKE_CURRENT_SOURCE_DIR}/include )
+
+install (
   DIRECTORY include/log4cpp
   DESTINATION include
   PATTERN "config.h" EXCLUDE
@@ -94,7 +93,8 @@ INSTALL (
   PATTERN "*.in" EXCLUDE
   )
 
-INSTALL (
-  TARGETS ${LOG4CPP_LIBRARY_NAME}
+install (
+  TARGETS log4cpp
   ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
   )
