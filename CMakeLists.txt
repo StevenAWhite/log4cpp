@@ -10,6 +10,10 @@
 cmake_minimum_required( VERSION 3.0)
 project ( Log4cpp )
 
+set(CMAKE_VERSION_MAJOR 1)
+set(CMAKE_VERSION_MINOR 1)
+set(CMAKE_PATCH_VERSION 4)
+
 if( NOT DEFINED CMAKE_DEBUG_POSTFIX)
   set (CMAKE_DEBUG_POSTFIX "D" CACHE STRING "Suffix to be appeneded before the extension to a debug output")
 endif()
@@ -81,8 +85,11 @@ elseif (APPLE)
 else ()
     target_compile_definitions ( log4cpp -pthread -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
 endif ()
-
-target_include_directories (log4cpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/. ${CMAKE_CURRENT_SOURCE_DIR}/include )
+	
+target_include_directories (log4cpp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+                                    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                    INTERFACE $<INSTALL_INTERFACE:include>
+  )
 
 install (
   DIRECTORY include/log4cpp
@@ -94,7 +101,35 @@ install (
   )
 
 install (
-  TARGETS log4cpp
+  TARGETS log4cpp EXPORT log4cpp
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
   )
+
+install(EXPORT log4cpp
+  NAMESPACE log4cpp::
+  FILE log4cpp.cmake
+  DESTINATION lib/cmake/log4cpp
+)
+
+include(CMakePackageConfigHelpers)
+# generate the config file that is includes the exports
+configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/log4cppConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/log4cppConfig.cmake"
+  INSTALL_DESTINATION "lib/cmake/log4cpp"
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO
+)
+
+# generate the version file for the config file
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/log4cppConfigVersion.cmake"
+  VERSION "${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}"
+  COMPATIBILITY AnyNewerVersion
+)
+
+# install the configuration file
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/log4cppConfig.cmake
+  DESTINATION lib/cmake/log4cpp
+)
