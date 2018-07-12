@@ -23,7 +23,7 @@
 
 namespace log4cpp {
 
-    LOG4CPP_EXPORT TimeStamp TimeStamp::_startStamp;
+    TimeStamp TimeStamp::_startStamp;
 
     TimeStamp::TimeStamp() {
 #ifdef LOG4CPP_HAVE_GETTIMEOFDAY
