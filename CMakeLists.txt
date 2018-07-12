@@ -83,7 +83,7 @@ if (WIN32)
 elseif (APPLE)
   target_compile_definitions ( Log4cpp PRIVATE -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
 else ()
-  target_compile_definitions ( Log4cpp PRIVATE -DLOG4CPP_HAVE_UNISTD_H -DNDEBUG  -DLOG4CPP_HAVE_SSTREAM )
+	target_compile_definitions ( Log4cpp PRIVATE -DLOG4CPP_HAVE_UNISTD_H -DNDEBUG  PUBLIC -DLOG4CPP_HAVE_SSTREAM )
   target_compile_options( Log4cpp PRIVATE -pthread )
 endif ()
 
