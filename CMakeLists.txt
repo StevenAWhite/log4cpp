@@ -81,11 +81,13 @@ if (WIN32)
   target_link_libraries (Log4cpp ws2_32  )
   set_target_properties(Log4cpp PROPERTIES   DEFINE_SYMBOL LOG4CPP_BUILD_DLL )
 elseif (APPLE)
-    target_compile_definitions ( Log4cpp  -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
+  target_compile_definitions ( Log4cpp PRIVATE -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
 else ()
-    target_compile_definitions ( Log4cpp -pthread -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
+  target_compile_definitions ( Log4cpp PRIVATE -DLOG4CPP_HAVE_UNISTD_H -DNDEBUG  -DLOG4CPP_HAVE_SSTREAM )
+  target_compile_options( Log4cpp PRIVATE -pthread )
 endif ()
-	
+
+#set_target_properties(Log4cpp PROPERTIES CXX_STANDARD 98 )
 target_include_directories (Log4cpp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
                                     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                     INTERFACE $<INSTALL_INTERFACE:include>
@@ -102,6 +104,7 @@ install (
 
 install (
   TARGETS Log4cpp EXPORT Log4cpp
+  LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
   )
