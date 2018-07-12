@@ -70,23 +70,23 @@ set(SOURCES
 
 option(LOG4CPP_BUILD_SHARED "Toggle building of static or shared library variant" ON)
 if (LOG4CPP_BUILD_SHARED)
-	add_library ( log4cpp  SHARED ${SOURCES} )
-	target_compile_definitions(log4cpp PUBLIC  LOG4CPP_HAS_DLL )
+	add_library ( Log4cpp  SHARED ${SOURCES} )
+	target_compile_definitions(Log4cpp PUBLIC  LOG4CPP_HAS_DLL )
 else()
-	add_library ( log4cpp  STATIC ${SOURCES} )
+	add_library ( Log4cpp  STATIC ${SOURCES} )
 endif()
 
 if (WIN32)
-  target_compile_definitions ( log4cpp  PRIVATE -D_CRT_SECURE_NO_WARNINGS )
-  target_link_libraries (log4cpp ws2_32  )
-  set_target_properties(log4cpp PROPERTIES   DEFINE_SYMBOL LOG4CPP_BUILD_DLL )
+  target_compile_definitions ( Log4cpp  PRIVATE -D_CRT_SECURE_NO_WARNINGS )
+  target_link_libraries (Log4cpp ws2_32  )
+  set_target_properties(Log4cpp PROPERTIES   DEFINE_SYMBOL LOG4CPP_BUILD_DLL )
 elseif (APPLE)
-    target_compile_definitions ( log4cpp  -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
+    target_compile_definitions ( Log4cpp  -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
 else ()
-    target_compile_definitions ( log4cpp -pthread -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
+    target_compile_definitions ( Log4cpp -pthread -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
 endif ()
 	
-target_include_directories (log4cpp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories (Log4cpp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
                                     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                     INTERFACE $<INSTALL_INTERFACE:include>
   )
@@ -101,22 +101,22 @@ install (
   )
 
 install (
-  TARGETS log4cpp EXPORT log4cpp
+  TARGETS Log4cpp EXPORT Log4cpp
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
   )
 
-install(EXPORT log4cpp
-  NAMESPACE log4cpp::
-  FILE log4cpp.cmake
-  DESTINATION lib/cmake/log4cpp
+install(EXPORT Log4cpp
+  NAMESPACE Log4cpp::
+  FILE Log4cpp.cmake
+  DESTINATION lib/cmake/Log4cpp
 )
 
 include(CMakePackageConfigHelpers)
 # generate the config file that is includes the exports
 configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/log4cppConfig.cmake.in
   "${CMAKE_CURRENT_BINARY_DIR}/log4cppConfig.cmake"
-  INSTALL_DESTINATION "lib/cmake/log4cpp"
+  INSTALL_DESTINATION "lib/cmake/Log4cpp"
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
@@ -131,5 +131,5 @@ write_basic_package_version_file(
 # install the configuration file
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/log4cppConfig.cmake
-  DESTINATION lib/cmake/log4cpp
+  DESTINATION lib/cmake/Log4cpp
 )
