@@ -118,7 +118,7 @@ install(EXPORT Log4cpp
 include(CMakePackageConfigHelpers)
 # generate the config file that is includes the exports
 configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/log4cppConfig.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/log4cppConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/Log4cppConfig.cmake"
   INSTALL_DESTINATION "lib/cmake/Log4cpp"
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
@@ -126,13 +126,13 @@ configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/log4cppConfig.cmake.in
 
 # generate the version file for the config file
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/log4cppConfigVersion.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/Log4cppConfigVersion.cmake"
   VERSION "${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}"
   COMPATIBILITY AnyNewerVersion
 )
 
 # install the configuration file
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/log4cppConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/Log4cppConfig.cmake
   DESTINATION lib/cmake/Log4cpp
 )
